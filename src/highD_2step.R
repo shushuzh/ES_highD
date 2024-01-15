@@ -25,8 +25,8 @@ highdim_2step = function(x,y,alpha){
                               tau=alpha,
                               h=max(0.05,sqrt(alpha*(1-alpha))*(log(p)/n)^(1/4)))
   lambda_beta = quan_model$lambda
-  beta_hat = quan_model$coeff[-1]
-  beta0 = quan_model$coeff[1]
+  beta_hat = quan_model$coeff.min[-1]
+  beta0 = quan_model$coeff.min[1]
   # step 2: fit ES regression for estimating theta
   Z_2step = apply(cbind(y,x),MARGIN = 1,FUN = Z_beta,beta=beta_hat,alpha=alpha,beta_0=beta0)
   ## CV: perform k-fold cross-validation to find optimal lambda value
@@ -107,8 +107,8 @@ variance_estimation=function(d_x_1,d_x_2,y_1,y_2,conf.level = 0.95){
                               #lambda=0.03,
                               tau=alpha,
                               h=max(0.05,sqrt(alpha*(1-alpha))*(log(p)/n)^(1/4)))
-  beta_hat = quan_model$coeff[-1]
-  beta0 = quan_model$coeff[1]
+  beta_hat = quan_model$coeff.min[-1]
+  beta0 = quan_model$coeff.min[1]
   sq = sum(beta_hat!=0)
   # step 2
   Z_2step = apply(cbind(y_1,d_x_1),MARGIN = 1,FUN = Z_beta,beta=beta_hat,alpha=alpha,beta_0=beta0)
@@ -164,8 +164,8 @@ variance_estimation=function(d_x_1,d_x_2,y_1,y_2,conf.level = 0.95){
                               #lambda=0.03,
                               tau=alpha,
                               h=max(0.05,sqrt(alpha*(1-alpha))*(log(p)/n)^(1/4)))
-  beta_hat = quan_model$coeff[-1]
-  beta0 = quan_model$coeff[1]
+  beta_hat = quan_model$coeff.min[-1]
+  beta0 = quan_model$coeff.min[1]
   sq = sum(beta_hat!=0)
   # step 2
   Z_2step = apply(cbind(y_2,d_x_2),MARGIN = 1,FUN = Z_beta,beta=beta_hat,alpha=alpha,beta_0=beta0)
