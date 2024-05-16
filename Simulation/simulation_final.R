@@ -1,19 +1,19 @@
-dnames = '/Users/shushuz/Desktop/ES_highD/src/'
-source(paste0(dnames,'highD_2step.R'))
+dnames = '/Users/shushuzhang/Dropbox (University of Michigan)/ES_HighD/Empirical_studies/ES_highD/'
+source(paste0(dnames,'src/highD_2step.R'))
 library(mvtnorm)
 library(boot)
 library(MultiRNG)
 
 runsim_onepara = function(n,p,seed,alpha,s){
   
-  ### generate 
+  ### 1. data generating process ###
   set.seed(seed)
   ES_epsilon = -dnorm(qnorm(alpha))/alpha
   # generate sigma
  #sigma = matrix(c(1:p^2),nrow = p)
  # for (i in 1:p){
  #   for (j in 1:p){
- #     sigma[i,j] = (.6)^{abs(i-j)}
+ #     sigma[i,j] = (.8)^{abs(i-j)}
  #  }
  # }
   #generate x
@@ -27,7 +27,8 @@ runsim_onepara = function(n,p,seed,alpha,s){
   epsilon = rnorm(n,0,1)
   y = x%*%gamma_star + diag(epsilon)%*%x%*%eta_star
 
-################ two-step oracle method: only fit nonzero entries (low-dim) #######
+  ### 2. Estimation  ###
+################ 2.1 two-step oracle method: only fit nonzero entries (low-dim) #######
 x_short = x[,1:s]
 beta_star_short = beta_star[1:s]
 theta_star_short = theta_star[1:s]
@@ -39,8 +40,8 @@ theta0_hat_lowdim=theta_hat_short[1]
 # outcome
 est_error_short = norm(theta_hat_short-theta_star_short,type="2")/norm(theta_star,type="2")
 
-########## two-step high-dim ES Estimation####################
-  res_est = highdim_2step(x,y,alpha)
+########## 2.2 two-step high-dim ES Estimation (proposed) ####################
+  res_est = highdim_2step(x,y,alpha,standardize=F)
   theta0_hat = res_est$theta0_hat
   theta_hat = res_est$theta_hat
   resid1 = res_est$resid
@@ -48,8 +49,7 @@ est_error_short = norm(theta_hat_short-theta_star_short,type="2")/norm(theta_sta
   lambda_theta = res_est$lambda_theta
   nonzero_index = which(theta_hat!=0)
   
-  ####### refit model ####################
-  Z_2step = apply(cbind(y,x),MARGIN = 1,FUN = Z_beta,beta=beta_star,alpha=alpha,beta_0=0)
+  ####### 2.3 refit model ####################
   if(length(nonzero_index)==0){theta_hat_refit_long=theta_hat
   } else {
     Z_2step = apply(cbind(y,x),MARGIN = 1,FUN = Z_beta,beta=beta_star,alpha=alpha,beta_0=0)
@@ -83,8 +83,8 @@ est_error_short = norm(theta_hat_short-theta_star_short,type="2")/norm(theta_sta
   write.table(estimation,file=paste("results_ind/n",n,"p",p,"tau",alpha,"seed",seed,"s",s,".csv",sep=""),sep=",",
               row.names=FALSE)
   
-  
-  ###############two-step Bootstrap##########
+  ### 3. Inference ###
+  ############### 3.1 two-step Bootstrap##########
 highdim_boot = function(data,index){
  y = data[index,1]
  x = data[index,-1]  
@@ -98,7 +98,7 @@ highdim_boot = function(data,index){
   ################## two step #########################
   Z_2step = apply(cbind(y,x),MARGIN = 1,FUN = Z_beta,beta=beta_hat,alpha=alpha,beta_0=beta0)
   ######### CV #########
-  theta_model = glmnet(x, Z_2step,lambda=lambda_theta)
+  theta_model = glmnet(x, Z_2step,lambda=lambda_theta,standardize=F)
   theta_hat = theta_model$beta
   return (theta_hat[1])
 }
@@ -106,8 +106,8 @@ theta0_boot = boot(cbind(y,x),highdim_boot,R=100)
 #theta0_hat = theta0_boot$t0
 theta0_hat_boot = mean(theta0_boot$t)
 
-#######################Inference on one parameter of interest####################
-res_inf = highdim_inf(x,y,alpha,col = 1,res_est=res_est)
+#######################3.2 Debiased Inference on one parameter of interest (proposed) ####################
+res_inf = highdim_inf(x,y,alpha,col = 1,res_est=res_est,standardize=F)
 theta_0_debias = res_inf$theta_debias
 CI = res_inf$Conf.int
 theta_0_star = theta_star[1]
