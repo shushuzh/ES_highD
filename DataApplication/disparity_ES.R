@@ -121,7 +121,7 @@ p2 <- ggplot(ci_lasso, aes(x = ci_group, y = bhat, color = ci_group)) +
 #dev.off()
 
 ##### Combine 
-pdf(file=paste0(dnames,'DataApplication/CI_2.pdf'),width=16, height=8)
+pdf(file=paste0(dnames,'DataApplication/CI.pdf'),width=16, height=8)
 ggarrange(p1, p2, ncol = 2, nrow = 1, widths = c(3,1))
 dev.off()
 
