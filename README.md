@@ -56,28 +56,28 @@ data <- read.csv("path/to/your/data.csv")  # Replace with your actual data file
 ### Step 4: Estimation Procedure
 
 1. **Set parameters**: Define the necessary parameters for the `highdim_2step` function. You may choose whether to standardize the covariates by setting `standardize=T` (default) or `standardize=F`. You may also choose whether to use ten-fold cross-validation (CV) or Bayesian information criteria (BIC) for tuning parameters by setting `tuning.method = "CV"` (default) or `tuning.method = "BIC"`. 
-```{r,eval = FALSE}
-parameters <- list(standardize = T, tuning.method = "CV") 
-```
+    ```{r,eval = FALSE}
+    parameters <- list(standardize = T, tuning.method = "CV") 
+    ```
 
 2. **Run the estimation procedure**: Use the `highdim_2step` function to estimate the `alpha`-th conditional expected shortfall.  
 
-```{r,eval = FALSE}
-result_estimation <- highdim_2step(x,y,alpha,parameters)
-```
+    ```{r,eval = FALSE}
+    result_estimation <- highdim_2step(x,y,alpha,parameters)
+    ```
 
 ### Step 5: Inference Procedure
 1. **Set parameters**: Define the necessary parameters for the highdim_inf function. Use the `col` parameter to specify the column number of the covariate of interest. The `highdim_inf` function provides confidence intervals at the specified `conf.level` (default is 0.95). You can choose whether to standardize the covariates by setting `standardize = T` (default) or `standardize = F`. Additionally, select the method for estimating asymptotic variance, i.e., `variance.method`, from `"RCV"` (refitted cross-validation), `"refit"` (vanilla refit), and `"plug-in"`. We strongly recommend users not to change the default option `"RCV"`.
 
-```{r,eval = FALSE}
-parameters_inf <- list(col = col, conf.level = conf.level,  standardize=F,variance.method = "RCV")  
-```
+    ```{r,eval = FALSE}
+    parameters_inf <- list(col = col, conf.level = conf.level,  standardize=F,variance.method = "RCV")  
+    ```
 
 2. **Run the inference procedure**: 
 Use the `highdim_inf` function to perform inference on the covariates of interest, based on the results from `highdim_2step` function. We obtain the debiased estimator with tuning parameters chosen by ten-fold cross-validation with the “one standard error rule” (see Section 7.10 in Hastie et al. 2009), that is, we choose the largest lambda whose error is no more than one standard error above the minimum mean cross-validated error. 
-```{r,eval = FALSE}
-result_inference <- highdim_inf(x,y,alpha,res_est=result_estimation,parameters_inf)
-```
+    ```{r,eval = FALSE}
+    result_inference <- highdim_inf(x,y,alpha,res_est=result_estimation,parameters_inf)
+    ```
 
 ### Step 6: Analyze Results
 
