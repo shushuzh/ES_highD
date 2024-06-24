@@ -95,7 +95,7 @@ This workflow should help you utilize the `highdim_2step` and `highdim_inf` func
 
 ## Demonstrations
 ### Simulations
-To understand how to use the functions for simulations, refer to "Simulation/simulation_final.R". This folder also contains the results obtained from 500 replications of the simulations.
+To understand how to use the functions for simulations, refer to "Simulation/simulation_final.R". This folder also contains the results (csv files) obtained from 500 replications of the simulations. The results are analyzed in "Simulation/Processing Simulation Results.ipynb". 
 
 ### Data Applications
 For practical applications, we analyze data from the National Health and Nutrition Examination Survey(NHANES) for the years 2017 to 2020 (https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2017-2020). Our study focuses on examining health disparities in high cotinine values among different ethnic groups.
